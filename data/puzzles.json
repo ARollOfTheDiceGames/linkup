@@ -1,0 +1,70 @@
+
+[
+  {
+    "id": 1,
+    "date": "2026-11-07",
+    "clues": [
+      "HOUSE",
+      "TRAFFIC",
+      "GREEN",
+      "CANDLE",
+      "DAY"
+    ],
+    "answer": "LIGHT",
+    "acceptedAnswers": [
+      "LIGHT"
+    ],
+    "hints": [
+      "Think of things that can be turned on or off.",
+      "The answer can go before or after each clue.",
+      "Think about illumination."
+    ],
+    "difficulty": "easy",
+    "explanation": "Lighthouse, traffic light, green light, candlelight, daylight."
+  },
+  {
+    "id": 2,
+    "date": "2026-11-08",
+    "clues": [
+      "BIRTH",
+      "HOLY",
+      "CELEBRATION",
+      "EARTH",
+      "TIME"
+    ],
+    "answer": "DAY",
+    "acceptedAnswers": [
+      "DAY"
+    ],
+    "hints": [
+      "Think about something that happens every year.",
+      "Some of these words can be combined with the answer.",
+      "There are national types of these."
+    ],
+    "difficulty": "medium",
+    "explanation": "Birthday, Holy day, Celebration days (holiday) earth day, daytime."
+  },
+  {
+    "id": 3,
+    "date": "2026-11-09",
+    "clues": [
+      "SOUND",
+      "PITCH",
+      "EARS",
+      "BRIDGE",
+      "SPEAKER"
+    ],
+    "answer": "MUSIC",
+    "acceptedAnswers": [
+      "MUSIC"
+    ],
+    "hints": [
+      "It has different sections.",
+      "Some forms of it are released in larger packages.",
+      "A popular form of entertainment."
+    ],
+    "difficulty": "easy",
+    "explanation": "Music is sound, it has pitch, you listen with you ears, there is a bridge to a song, and you use a speaker to listen to it."
+  }
+    
+]
