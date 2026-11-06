@@ -240,28 +240,102 @@ footer {
 </main>
 
 <script>
+
 let attempts = 0;
 let finished = false;
 let hintsUsed = 0;
 let results = [];
+let currentPuzzle = null;
 
-const answer = "CANDY";
-const hints = [
-  "Think of something that is handed out at school.",
-  "The answer can go before the clue, or it is a word relating to the clue.",
-  "Think of unhealthiness.."
-];
+// LOAD TODAY'S PUZZLE
+async function loadPuzzle() {
+  const message = document.getElementById("message");
+  const guessInput = document.getElementById("guess");
+  const guessButton = document.querySelector(".submit");
 
+  guessInput.disabled = true;
+  guessButton.disabled = true;
+  message.textContent = "Loading today's puzzle...";
+
+  try {
+    const response = await fetch("./data/puzzles.json");
+
+    if (!response.ok) {
+      throw new Error("Could not load puzzles");
+    }
+
+    const puzzles = await response.json();
+
+    const today = new Date().toLocaleDateString("en-CA", {
+      timeZone: "America/New_York"
+    });
+
+    currentPuzzle = puzzles.find(
+      puzzle => puzzle.date === today
+    );
+
+    if (!currentPuzzle) {
+      message.textContent =
+        "No puzzle available today. Check back tomorrow!";
+      return;
+    }
+
+    // DISPLAY CLUES
+    document.querySelector(".clues").innerHTML =
+      currentPuzzle.clues.map(word =>
+        `<div class="clue">${word}</div>`
+      ).join("");
+
+    // UPDATE PUZZLE NUMBER
+    document.querySelector(".header-label").textContent =
+      "DAILY PUZZLE #" +
+      String(currentPuzzle.id).padStart(3, "0");
+
+    message.textContent = "You have 6 attempts remaining.";
+
+    guessInput.disabled = false;
+    guessButton.disabled = false;
+
+  } catch (error) {
+    console.error(error);
+    message.textContent =
+      "Couldn't load today's puzzle. Please try again later.";
+  }
+}
+
+// HINT SYSTEM
+function showHint() {
+  if (finished || !currentPuzzle) return;
+
+  const hintBox = document.getElementById("hint");
+
+  if (hintsUsed < currentPuzzle.hints.length) {
+    hintBox.textContent =
+      "💡 " + currentPuzzle.hints[hintsUsed];
+
+    hintsUsed++;
+  } else {
+    hintBox.textContent = "No more hints available!";
+  }
+}
+
+// GUESS SYSTEM
 function submitGuess() {
-  if (finished) return;
+  if (finished || !currentPuzzle) return;
 
   const input = document.getElementById("guess");
   const guess = input.value.trim().toUpperCase();
 
   if (!guess) return;
 
+  const acceptedAnswers =
+    currentPuzzle.acceptedAnswers || [currentPuzzle.answer];
+
+  const correct = acceptedAnswers.some(
+    answer => answer.trim().toUpperCase() === guess
+  );
+
   attempts++;
-  const correct = guess === answer;
 
   results.push(correct ? "🟩" : "⬜");
 
@@ -278,37 +352,28 @@ function submitGuess() {
   }
 
   input.value = "";
-  input.focus();
+
+  if (!finished) input.focus();
 }
 
-function showHint() {
-  if (finished) return;
-
-  const hintBox = document.getElementById("hint");
-
-  if (hintsUsed < hints.length) {
-    hintBox.textContent = "💡 " + hints[hintsUsed];
-    hintsUsed++;
-  } else {
-    hintBox.textContent = "No more hints available!";
-  }
-}
-
+// FINISH GAME
 function finish(won) {
   finished = true;
 
   document.getElementById("result").style.display = "block";
+
   document.getElementById("result-title").textContent =
     won ? "🎉 You got it!" : "Better luck tomorrow!";
 
   document.getElementById("result-text").textContent =
     won
       ? "You solved Linkup in " + attempts + " attempt(s)."
-      : "The answer was Candy.";
+      : "The answer was " + currentPuzzle.answer + ".";
 
   if (!won) {
-    results.push("⬜");
-    while (results.length < 6) results.push("⬜");
+    while (results.length < 6) {
+      results.push("⬜");
+    }
   }
 
   document.getElementById("result-grid").textContent =
@@ -318,28 +383,36 @@ function finish(won) {
     won ? "Connection found!" : "Puzzle completed.";
 
   document.getElementById("guess").disabled = true;
+  document.querySelector(".submit").disabled = true;
+
+  document.getElementById("explanation").textContent =
+    currentPuzzle.explanation || "";
 }
 
+// ENTER KEY
 document.getElementById("guess").addEventListener("keydown", e => {
   if (e.key === "Enter") submitGuess();
 });
 
+// SHARE RESULTS
 function shareResult() {
   const text =
-    "LINKUP #001\n" +
-    (results.join("") + "\n") +
-    (attempts <= 6 && results.some(x => x === "🟩")
-      ? attempts + "/6"
-      : "X/6") +
+    "LINKUP #" + currentPuzzle.id + "\n" +
+    results.join("") + "\n" +
+    (results.includes("🟩") ? attempts + "/6" : "X/6") +
     "\nlinkup.daily";
 
   if (navigator.share) {
-    navigator.share({text});
+    navigator.share({ text });
   } else {
-    navigator.clipboard.writeText(text);
-    alert("Results copied!");
+    navigator.clipboard.writeText(text)
+      .then(() => alert("Results copied!"));
   }
 }
+
+// START GAME
+loadPuzzle();
+
 </script>
 
 </body>
