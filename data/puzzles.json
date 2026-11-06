@@ -1,7 +1,31 @@
 
+
 [
   {
     "id": 1,
+    "date": "2026-11-06",
+    "clues": [
+      "Store",
+      "Eye",
+      "Mess",
+      "Plastic",
+      "Sweet"
+    ],
+    "answer": "CANDY",
+    "acceptedAnswers": [
+      "CANDY"
+    ],
+    "hints": [
+      "Think of something handed out at school.",
+      "The answer can go before some of the clues.",
+      "Think about something sweet."
+    ],
+    "difficulty": "easy",
+    "category": "Everyday Life",
+    "explanation": "Add your explanation here."
+  },
+  {
+    "id": 2,
     "date": "2026-11-07",
     "clues": [
       "HOUSE",
@@ -15,15 +39,17 @@
       "LIGHT"
     ],
     "hints": [
-      "Think of things that can be turned on or off.",
-      "The answer can go before or after each clue.",
-      "Think about illumination."
+      "Think about illumination.",
+      "It can be switched on and off.",
+      "It helps you see."
     ],
     "difficulty": "easy",
-    "explanation": "Lighthouse, traffic light, green light, candlelight, daylight."
+    "category": "Everyday Life",
+    "explanation": "Lighthouse, traffic light, green light, candlelight, and daylight."
   },
   {
-    "id": 2,
+
+    "id": 3,
     "date": "2026-11-08",
     "clues": [
       "BIRTH",
@@ -45,7 +71,7 @@
     "explanation": "Birthday, Holy day, Celebration days (holiday) earth day, daytime."
   },
   {
-    "id": 3,
+    "id": 4,
     "date": "2026-11-09",
     "clues": [
       "SOUND",
