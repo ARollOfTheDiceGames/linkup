@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINKUP — Daily Word Game</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f8f8f5;
+  color: #20221f;
+  font-family: Trebuchet MS, sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  height: 66px;
+  border-bottom: 1px solid #deded8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.header-label {
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 1px;
+}
+
+main {
+  width: 100%;
+  max-width: 480px;
+  margin: 45px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 34px;
+  margin: 0 0 8px;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.instructions {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.clues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.clue {
+  background: white;
+  border: 1px solid #deded8;
+  border-radius: 10px;
+  padding: 22px 10px;
+  font-size: 19px;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.clue:last-child {
+  grid-column: span 2;
+}
+
+.clue:hover {
+  border-color: #779b83;
+}
+
+.input-area {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  background: white;
+}
+
+input:focus {
+  border-color: #548665;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit {
+  background: #243e30;
+  color: white;
+}
+
+.submit:hover { background: #365b45; }
+
+.hint-btn {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 12px 18px;
+  margin-top: 12px;
+  color: #555;
+}
+
+.attempts {
+  margin: 22px 0;
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #deded8;
+}
+
+.dot.used { background: #426b50; }
+
+.message {
+  min-height: 25px;
+  font-size: 14px;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 13px;
+  color: #777;
+  min-height: 20px;
+  margin-top: 8px;
+}
+
+.result {
+  display: none;
+  margin-top: 25px;
+  padding: 22px;
+  background: white;
+  border: 1px solid #deded8;
+  border-radius: 12px;
+}
+
+.result h2 { margin-top: 0; }
+
+.share {
+  background: #243e30;
+  color: white;
+  padding: 13px 20px;
+  margin-top: 12px;
+}
+
+footer {
+  color: #999;
+  font-size: 12px;
+  margin-top: 45px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">LINKUP.</div>
+  <div class="header-label">DAILY PUZZLE #001</div>
+</header>
+
+<main>
+  <h1>Make the connection.</h1>
+  <div class="subtitle">One word. Five connections. Six guesses.</div>
+
+  <div class="instructions">
+    Find the ONE word that can connect with all five words below.
+    Think of common phrases and combinations.
+  </div>
+
+  <div class="clues">
+    <div class="clue">Store</div>
+    <div class="clue">Eye</div>
+    <div class="clue">Mess</div>
+    <div class="clue">Plastic</div>
+    <div class="clue">Sweet</div>
+  </div>
+
+  <div class="input-area">
+    <input id="guess" placeholder="Enter your guess..." autocomplete="off">
+    <button class="submit" onclick="submitGuess()">GUESS</button>
+  </div>
+
+  <button class="hint-btn" onclick="showHint()">Need a hint?</button>
+  <div class="hint" id="hint"></div>
+
+  <div class="attempts" id="attempts">
+    <div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="message" id="message">You have 6 attempts remaining.</div>
+
+  <div class="result" id="result">
+    <h2 id="result-title"></h2>
+    <p id="result-text"></p>
+    <div id="result-grid"></div>
+    <button class="share" onclick="shareResult()">SHARE RESULT</button>
+  </div>
+
+  <footer>ONE PUZZLE EVERY DAY. COME BACK TOMORROW.</footer>
+</main>
+
+<script>
+let attempts = 0;
+let finished = false;
+let hintsUsed = 0;
+let results = [];
+
+const answer = "Candy";
+const hints = [
+  "Think of something that is handed out at school.",
+  "The answer can go before the clue, or it is a word relating to the clue.",
+  "Think of unhealthiness.."
+];
+
+function submitGuess() {
+  if (finished) return;
+
+  const input = document.getElementById("guess");
+  const guess = input.value.trim().toUpperCase();
+
+  if (!guess) return;
+
+  attempts++;
+  const correct = guess === answer;
+
+  results.push(correct ? "🟩" : "⬜");
+
+  const dots = document.querySelectorAll(".dot");
+  dots[attempts - 1].classList.add("used");
+
+  if (correct) {
+    finish(true);
+  } else if (attempts >= 6) {
+    finish(false);
+  } else {
+    document.getElementById("message").textContent =
+      "Not quite! " + (6 - attempts) + " attempts remaining.";
+  }
+
+  input.value = "";
+  input.focus();
+}
+
+function showHint() {
+  if (finished) return;
+
+  const hintBox = document.getElementById("hint");
+
+  if (hintsUsed < hints.length) {
+    hintBox.textContent = "💡 " + hints[hintsUsed];
+    hintsUsed++;
+  } else {
+    hintBox.textContent = "No more hints available!";
+  }
+}
+
+function finish(won) {
+  finished = true;
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result-title").textContent =
+    won ? "🎉 You got it!" : "Better luck tomorrow!";
+
+  document.getElementById("result-text").textContent =
+    won
+      ? "You solved Linkup in " + attempts + " attempt(s)."
+      : "The answer was Candy.";
+
+  if (!won) {
+    results.push("⬜");
+    while (results.length < 6) results.push("⬜");
+  }
+
+  document.getElementById("result-grid").textContent =
+    results.join(" ");
+
+  document.getElementById("message").textContent =
+    won ? "Connection found!" : "Puzzle completed.";
+
+  document.getElementById("guess").disabled = true;
+}
+
+document.getElementById("guess").addEventListener("keydown", e => {
+  if (e.key === "Enter") submitGuess();
+});
+
+function shareResult() {
+  const text =
+    "LINKUP #001\n" +
+    (results.join("") + "\n") +
+    (attempts <= 6 && results.some(x => x === "🟩")
+      ? attempts + "/6"
+      : "X/6") +
+    "\nlinkup.daily";
+
+  if (navigator.share) {
+    navigator.share({text});
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Results copied!");
+  }
+}
+</script>
+
+</body>
+</html>
