@@ -1,19 +1,24 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>LINKUP — Daily Word Game</title>
-  <link rel="icon" type="image/png" href="./images(1).png">
+<link rel="icon" type="image/png" href="./images(1).png">
+
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   background: #f8f8f5;
   color: #20221f;
-  font-family: Trebuchet MS, sans-serif;
+  font-family: "Trebuchet MS", sans-serif;
   min-height: 100vh;
 }
 
@@ -109,6 +114,10 @@ input:focus {
   border-color: #548665;
 }
 
+input:disabled {
+  background: #eee;
+}
+
 button {
   border: none;
   border-radius: 8px;
@@ -118,12 +127,19 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .submit {
   background: #243e30;
   color: white;
 }
 
-.submit:hover { background: #365b45; }
+.submit:hover:not(:disabled) {
+  background: #365b45;
+}
 
 .hint-btn {
   background: transparent;
@@ -131,6 +147,10 @@ button {
   padding: 12px 18px;
   margin-top: 12px;
   color: #555;
+}
+
+.hint-btn:hover:not(:disabled) {
+  border-color: #548665;
 }
 
 .attempts {
@@ -147,7 +167,9 @@ button {
   background: #deded8;
 }
 
-.dot.used { background: #426b50; }
+.dot.used {
+  background: #426b50;
+}
 
 .message {
   min-height: 25px;
@@ -161,6 +183,7 @@ button {
   color: #777;
   min-height: 20px;
   margin-top: 8px;
+  line-height: 1.5;
 }
 
 .result {
@@ -172,19 +195,58 @@ button {
   border-radius: 12px;
 }
 
-.result h2 { margin-top: 0; }
+.result h2 {
+  margin-top: 0;
+}
+
+.answer {
+  font-size: 25px;
+  font-weight: 900;
+  margin: 12px 0;
+  color: #365b45;
+}
+
+.explanation {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.difficulty {
+  color: #888;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
 
 .share {
   background: #243e30;
   color: white;
   padding: 13px 20px;
   margin-top: 12px;
+  width: 100%;
 }
 
 footer {
   color: #999;
   font-size: 12px;
   margin-top: 45px;
+  text-align: center;
+}
+
+@media(max-width: 400px) {
+  h1 {
+    font-size: 29px;
+  }
+
+  header {
+    padding: 0 14px;
+  }
+
+  .header-label {
+    font-size: 10px;
+  }
 }
 </style>
 </head>
@@ -193,187 +255,337 @@ footer {
 
 <header>
   <div class="logo">LINKUP.</div>
-  <div class="header-label">DAILY PUZZLE #001</div>
+  <div class="header-label">LOADING PUZZLE...</div>
 </header>
 
 <main>
+
   <h1>Make the connection.</h1>
-  <div class="subtitle">One word. Five connections. Six guesses.</div>
+
+  <div class="subtitle">
+    One word. Five connections. Six guesses.
+  </div>
 
   <div class="instructions">
     Find the ONE word that can connect with all five words below.
     Think of common phrases and combinations.
   </div>
 
-  <div class="clues">
-    <div class="clue">Store</div>
-    <div class="clue">Eye</div>
-    <div class="clue">Mess</div>
-    <div class="clue">Plastic</div>
-    <div class="clue">Sweet</div>
+  <div class="clues" id="clues">
+    <div class="clue">...</div>
+    <div class="clue">...</div>
+    <div class="clue">...</div>
+    <div class="clue">...</div>
+    <div class="clue">...</div>
   </div>
 
   <div class="input-area">
-    <input id="guess" placeholder="Enter your guess..." autocomplete="off">
-    <button class="submit" onclick="submitGuess()">GUESS</button>
+    <input
+      id="guess"
+      placeholder="Enter your guess..."
+      autocomplete="off"
+      disabled
+    >
+
+    <button
+      class="submit"
+      id="submitButton"
+      onclick="submitGuess()"
+      disabled
+    >
+      GUESS
+    </button>
   </div>
 
-  <button class="hint-btn" onclick="showHint()">Need a hint?</button>
+  <button
+    class="hint-btn"
+    id="hintButton"
+    onclick="showHint()"
+    disabled
+  >
+    Need a hint?
+  </button>
+
   <div class="hint" id="hint"></div>
 
   <div class="attempts" id="attempts">
-    <div class="dot"></div><div class="dot"></div>
-    <div class="dot"></div><div class="dot"></div>
-    <div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
   </div>
 
-  <div class="message" id="message">You have 6 attempts remaining.</div>
+  <div class="message" id="message">
+    Loading today's puzzle...
+  </div>
 
   <div class="result" id="result">
+
     <h2 id="result-title"></h2>
+
+    <div class="answer" id="result-answer"></div>
+
+    <div class="difficulty" id="result-difficulty"></div>
+
     <p id="result-text"></p>
+
+    <p class="explanation" id="explanation"></p>
+
     <div id="result-grid"></div>
-    <button class="share" onclick="shareResult()">SHARE RESULT</button>
+
+    <button class="share" onclick="shareResult()">
+      SHARE RESULT
+    </button>
+
   </div>
 
-  <footer>ONE PUZZLE EVERY DAY. COME BACK TOMORROW.</footer>
+  <footer>
+    ONE PUZZLE EVERY DAY. COME BACK TOMORROW.
+  </footer>
+
 </main>
 
 <script>
 
-let attempts = 0;
-let finished = false;
-let hintsUsed = 0;
-let results = [];
+// =====================================
+// GAME VARIABLES
+// =====================================
+
 let currentPuzzle = null;
 
-// LOAD TODAY'S PUZZLE
-async function loadPuzzle() {
-  const message = document.getElementById("message");
-  const guessInput = document.getElementById("guess");
-  const guessButton = document.querySelector(".submit");
+let attempts = 0;
+let hintsUsed = 0;
+let finished = false;
 
-  guessInput.disabled = true;
-  guessButton.disabled = true;
-  message.textContent = "Loading today's puzzle...";
+let results = [];
+
+const MAX_ATTEMPTS = 6;
+
+
+// =====================================
+// LOAD TODAY'S PUZZLE FROM JSON
+// =====================================
+
+async function loadPuzzle() {
+
+  const message = document.getElementById("message");
+
+  const input = document.getElementById("guess");
+  const submitButton = document.getElementById("submitButton");
+  const hintButton = document.getElementById("hintButton");
 
   try {
+
+    message.textContent = "Loading today's puzzle...";
+
     const response = await fetch("./data/puzzles.json");
 
     if (!response.ok) {
-      throw new Error("Could not load puzzles");
+      throw new Error("Could not load puzzles.json");
     }
 
     const puzzles = await response.json();
 
-    const today = new Date().toLocaleDateString("en-CA", {
-      timeZone: "America/New_York"
-    });
+    // Get today's date using Eastern Time
+
+    const today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date());
+
+    // Find today's puzzle
 
     currentPuzzle = puzzles.find(
       puzzle => puzzle.date === today
     );
 
+    // Check if a puzzle exists
+
     if (!currentPuzzle) {
+
       message.textContent =
         "No puzzle available today. Check back tomorrow!";
+
       return;
     }
 
-    // DISPLAY CLUES
-    document.querySelector(".clues").innerHTML =
+    // Check database entry
+
+    if (
+      !Array.isArray(currentPuzzle.clues) ||
+      currentPuzzle.clues.length !== 5 ||
+      !currentPuzzle.answer ||
+      !Array.isArray(currentPuzzle.hints)
+    ) {
+      throw new Error("Today's puzzle has missing or invalid data.");
+    }
+
+    // Display clues
+
+    document.getElementById("clues").innerHTML =
       currentPuzzle.clues.map(word =>
-        `<div class="clue">${word}</div>`
+        `<div class="clue"></div>`
       ).join("");
 
-    // UPDATE PUZZLE NUMBER
+    // Safely insert clue text
+
+    document.querySelectorAll(".clue").forEach((element, index) => {
+      element.textContent = currentPuzzle.clues[index];
+    });
+
+    // Update puzzle number
+
     document.querySelector(".header-label").textContent =
       "DAILY PUZZLE #" +
       String(currentPuzzle.id).padStart(3, "0");
 
+    // Enable game
+
+    input.disabled = false;
+    submitButton.disabled = false;
+    hintButton.disabled = false;
+
     message.textContent = "You have 6 attempts remaining.";
 
-    guessInput.disabled = false;
-    guessButton.disabled = false;
-
   } catch (error) {
-    console.error(error);
+
+    console.error("Puzzle loading error:", error);
+
     message.textContent =
       "Couldn't load today's puzzle. Please try again later.";
+
   }
+
 }
 
+
+// =====================================
 // HINT SYSTEM
+// =====================================
+
 function showHint() {
+
   if (finished || !currentPuzzle) return;
 
   const hintBox = document.getElementById("hint");
 
   if (hintsUsed < currentPuzzle.hints.length) {
+
     hintBox.textContent =
       "💡 " + currentPuzzle.hints[hintsUsed];
 
     hintsUsed++;
+
   } else {
+
     hintBox.textContent = "No more hints available!";
+
   }
+
 }
 
-// GUESS SYSTEM
+
+// =====================================
+// CHECK PLAYER'S GUESS
+// =====================================
+
 function submitGuess() {
+
   if (finished || !currentPuzzle) return;
 
   const input = document.getElementById("guess");
+
   const guess = input.value.trim().toUpperCase();
 
   if (!guess) return;
 
+  // Get accepted answers
+
   const acceptedAnswers =
     currentPuzzle.acceptedAnswers || [currentPuzzle.answer];
 
-  const correct = acceptedAnswers.some(
-    answer => answer.trim().toUpperCase() === guess
+  // Check answer without worrying about capitalization
+
+  const correct = acceptedAnswers.some(answer =>
+    answer.trim().toUpperCase() === guess
   );
 
   attempts++;
 
   results.push(correct ? "🟩" : "⬜");
 
+  // Update attempt indicators
+
   const dots = document.querySelectorAll(".dot");
+
   dots[attempts - 1].classList.add("used");
 
   if (correct) {
+
     finish(true);
-  } else if (attempts >= 6) {
+
+  } else if (attempts >= MAX_ATTEMPTS) {
+
     finish(false);
+
   } else {
+
     document.getElementById("message").textContent =
-      "Not quite! " + (6 - attempts) + " attempts remaining.";
+      "Not quite! " + (MAX_ATTEMPTS - attempts) +
+      " attempts remaining.";
+
   }
 
   input.value = "";
 
   if (!finished) input.focus();
+
 }
 
-// FINISH GAME
+
+// =====================================
+// FINISH THE GAME
+// =====================================
+
 function finish(won) {
+
   finished = true;
 
-  document.getElementById("result").style.display = "block";
+  const result = document.getElementById("result");
+
+  result.style.display = "block";
 
   document.getElementById("result-title").textContent =
     won ? "🎉 You got it!" : "Better luck tomorrow!";
 
+  document.getElementById("result-answer").textContent =
+    currentPuzzle.answer;
+
   document.getElementById("result-text").textContent =
     won
-      ? "You solved Linkup in " + attempts + " attempt(s)."
+      ? "You solved Linkup in " + attempts + " attempt(s)!"
       : "The answer was " + currentPuzzle.answer + ".";
 
+  document.getElementById("result-difficulty").textContent =
+    currentPuzzle.difficulty
+      ? "DIFFICULTY: " + currentPuzzle.difficulty
+      : "";
+
+  document.getElementById("explanation").textContent =
+    currentPuzzle.explanation || "";
+
+  // Fill remaining boxes if player loses
+
   if (!won) {
-    while (results.length < 6) {
+
+    while (results.length < MAX_ATTEMPTS) {
       results.push("⬜");
     }
+
   }
 
   document.getElementById("result-grid").textContent =
@@ -382,35 +594,86 @@ function finish(won) {
   document.getElementById("message").textContent =
     won ? "Connection found!" : "Puzzle completed.";
 
-  document.getElementById("guess").disabled = true;
-  document.querySelector(".submit").disabled = true;
+  // Disable controls
 
-  document.getElementById("explanation").textContent =
-    currentPuzzle.explanation || "";
+  document.getElementById("guess").disabled = true;
+
+  document.getElementById("submitButton").disabled = true;
+
+  document.getElementById("hintButton").disabled = true;
+
 }
 
-// ENTER KEY
-document.getElementById("guess").addEventListener("keydown", e => {
-  if (e.key === "Enter") submitGuess();
+
+// =====================================
+// ENTER KEY SUPPORT
+// =====================================
+
+document.getElementById("guess").addEventListener("keydown", event => {
+
+  if (event.key === "Enter") {
+    submitGuess();
+  }
+
 });
 
-// SHARE RESULTS
-function shareResult() {
-  const text =
-    "LINKUP #" + currentPuzzle.id + "\n" +
-    results.join("") + "\n" +
-    (results.includes("🟩") ? attempts + "/6" : "X/6") +
-    "\nlinkup.daily";
 
-  if (navigator.share) {
-    navigator.share({ text });
-  } else {
-    navigator.clipboard.writeText(text)
-      .then(() => alert("Results copied!"));
+// =====================================
+// SHARE RESULTS
+// =====================================
+
+async function shareResult() {
+
+  if (!currentPuzzle) return;
+
+  const won = results.includes("🟩");
+
+  const score = won
+    ? attempts + "/6"
+    : "X/6";
+
+  const text =
+    "LINKUP #" +
+    String(currentPuzzle.id).padStart(3, "0") +
+    "\n\n" +
+    results.join("") +
+    "\n" +
+    score +
+    "\n\n" +
+    "Play Linkup!";
+
+  try {
+
+    if (navigator.share) {
+
+      await navigator.share({
+        title: "LINKUP",
+        text: text
+      });
+
+    } else {
+
+      await navigator.clipboard.writeText(text);
+
+      alert("Results copied to clipboard!");
+
+    }
+
+  } catch (error) {
+
+    if (error.name !== "AbortError") {
+      console.error("Sharing failed:", error);
+    }
+
   }
+
 }
 
+
+// =====================================
 // START GAME
+// =====================================
+
 loadPuzzle();
 
 </script>
