@@ -113,7 +113,27 @@
     ],
     "difficulty": "medium",
     "explanation": "Wood grain, a grain of sand, a grain of dust, wheat is grain, and gorp (trailmix) is made with grain."
+  },
+  {
+    "id": 6,
+    "date": "2026-11-10",
+    "clues": [
+      "TWIST",
+      "FLICK",
+      "SHOOT",
+      "OVERPRICED",
+      "ART",
+    ],
+    "answer": "MOVIE",
+    "acceptedAnswers": [
+      "MOVIE"
+    ],
+    "hints": [
+      "It is commercially fueled.",
+      "They are starting to be made by ai.",
+      "It is a form of entertainment.",
+    ],
+    "difficulty": "easy",
+    "explanation": "Plot twists, can be referred to as a flick, they are shot, they are getting to be very expensive, and they count as an art form."
   }
-      
-    
 ]
