@@ -91,6 +91,29 @@
     ],
     "difficulty": "easy",
     "explanation": "Music is sound, it has pitch, you listen with you ears, there is a bridge to a song, and you use a speaker to listen to it."
+  },
+  {
+    "id": 5,
+    "date": "2026-11-10",
+    "clues": [
+      "WOOD",
+      "SAND",
+      "DUST",
+      "WHEAT",
+      "GORP"
+    ],
+    "answer": "GRAIN",
+    "acceptedAnswers": [
+      "GRAIN"
+    ],
+    "hints": [
+      "It can be a material.",
+      "It is the root for a popular snack.",
+      "It is farmed."
+    ],
+    "difficulty": "medium",
+    "explanation": "Wood grain, a grain of sand, a grain of dust, wheat is grain, and gorp (trailmix) is made with grain."
   }
+      
     
 ]
