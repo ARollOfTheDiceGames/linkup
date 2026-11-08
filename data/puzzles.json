@@ -59,6 +59,7 @@
       "TIME"
     ],
     "answer": "DAY",
+    "category": "Everyday Life",
     "acceptedAnswers": [
       "DAY"
     ],
@@ -90,6 +91,7 @@
       "A popular form of entertainment."
     ],
     "difficulty": "easy",
+    "category": "Everyday Life",
     "explanation": "Music is sound, it has pitch, you listen with you ears, there is a bridge to a song, and you use a speaker to listen to it."
   },
   {
@@ -112,6 +114,7 @@
       "It is farmed."
     ],
     "difficulty": "medium",
+    "category": "Everyday Life",
     "explanation": "Wood grain, a grain of sand, a grain of dust, wheat is grain, and gorp (trailmix) is made with grain."
   },
   {
@@ -134,6 +137,7 @@
       "It is a form of entertainment.",
     ],
     "difficulty": "easy",
+    "category": "Everyday Life",
     "explanation": "Plot twists, can be referred to as a flick, they are shot, they are getting to be very expensive, and they count as an art form."
   }
 ]
